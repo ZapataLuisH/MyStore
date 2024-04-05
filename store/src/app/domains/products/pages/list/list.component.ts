@@ -1,69 +1,64 @@
-import { Component, signal } from '@angular/core';
-import {ProductComponent} from './../../components/product/product.component'
+import { Component, Input, SimpleChanges, inject, signal } from '@angular/core';
+import {ProductComponent} from '@products/components/product/product.component'
 import { CommonModule } from '@angular/common';
-import {Product} from './../../../shared/models/product.model';
-import {HeaderComponent} from './../../../shared/components/header/header.component'
+import { RouterLinkWithHref } from '@angular/router';
+import {Product} from '@shared/models/product.model';
+import {HeaderComponent} from '@shared/components/header/header.component'
+import { CartService } from '@shared/services/cart.service';
+import { ProductService } from '@shared/services/product.service';
+import { CategoryService } from '@shared/services/category.service';
+import { Category } from '@shared/models/category.model';
+
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [CommonModule, ProductComponent, HeaderComponent],
+  imports: [CommonModule, ProductComponent, HeaderComponent, RouterLinkWithHref],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css'
 })
 export class ListComponent {
   products = signal<Product[]>([]);
-  cart = signal<Product[]>([]);
+  categories = signal<Category[]>([]);
+  private cartService = inject(CartService);
+  private productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
+  @Input() category_id?: string;
 
-  constructor(){
-    const initProducts: Product[] = [
-      {
-        id: Date.now(),
-        title: 'Pro 1',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=24',
-        creationAt: new Date().toISOString()
-      },
-      {
-        id: Date.now(),
-        title: 'Pro 2',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=25',
-        creationAt: new Date().toISOString()
-      },
-      {
-        id: Date.now(),
-        title: 'Pro 2',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=26',
-        creationAt: new Date().toISOString()
-      },
-      {
-        id: Date.now(),
-        title: 'Pro 1',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=34',
-        creationAt: new Date().toISOString()
-      },
-      {
-        id: Date.now(),
-        title: 'Pro 2',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=35',
-        creationAt: new Date().toISOString()
-      },
-      {
-        id: Date.now(),
-        title: 'Pro 2',
-        price: 100,
-        image: 'https://picsum.photos/640/640?r=36',
-        creationAt: new Date().toISOString()
-      }
-    ]
-    this.products.set(initProducts);
+  ngOnInit(){
+
+    this.getCategories();
   }
 
+  ngOnChanges(changes: SimpleChanges){
+    this.getProducts();
+  }
+
+
+
   addToCart(product: Product){
-    this.cart.update(prevState => [...prevState, product])
-}
+    this.cartService.addtoCart(product)
+  }
+
+  private getProducts(){
+    this.productService.getProducts(this.category_id)
+    .subscribe({
+      next: (products) => {
+        this.products.set(products);
+      },
+      error: () => {
+      }
+    })
+  }
+
+  private getCategories(){
+    this.categoryService.getAll()
+    .subscribe({
+      next: (data) => {
+        this.categories.set(data);
+      },
+      error: () => {
+      }
+    })
+  }
 }
