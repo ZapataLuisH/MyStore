@@ -11,7 +11,7 @@ export class CategoryService {
 
   constructor() { }
 
-  getAll(){
-    return this.http.get<Category[]>(`https://api.escuelajs.co/api/v1/categories`);
-  }
+  getAll() {
+  return this.http.get<any[]>('http://localhost:3000/categories');
+}
 }
