@@ -28,11 +28,14 @@ export default class ListComponent {
   ngOnInit(){
 
     this.getCategories();
+    this.getProducts();
   }
 
   ngOnChanges(changes: SimpleChanges){
+  if(changes['category_id']){
     this.getProducts();
   }
+}
 
 
 
