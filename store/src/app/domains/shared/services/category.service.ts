@@ -9,9 +9,12 @@ export class CategoryService {
 
   private http = inject(HttpClient);
 
+  // 👇 URL de tu API deployada
+  private apiUrl = 'https://api-store-pfjt.onrender.com';
+
   constructor() { }
 
   getAll() {
-  return this.http.get<any[]>('http://localhost:3000/categories');
-}
+    return this.http.get<Category[]>(`${this.apiUrl}/categories`);
+  }
 }

@@ -26,7 +26,7 @@ export class CartService {
   // ✅ DEBE ESTAR AQUÍ DENTRO
   sendOrderToWhatsApp(){
 
-    const phone = '573158472570';
+    const phone = '573227358997';
 
     const cart = this.cart();
 
